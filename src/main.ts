@@ -21,7 +21,6 @@ const ctx = canvas.getContext("2d");
 //reading the mouse position
 const cursor = { active: false, x: 0, y: 0 };
 
-
 //event listeners for the mouse movements
 canvas.addEventListener("mousedown", (e) => {
   cursor.active = true;
@@ -56,4 +55,3 @@ clearButton.addEventListener("click", () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 });
-
