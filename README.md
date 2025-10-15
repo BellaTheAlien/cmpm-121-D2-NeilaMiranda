@@ -1,3 +1,3 @@
-# CMPM 121 D2 Project
+# CMPM 121 D2 Project - By Neila Miranda
 
-This is the starting point for your CMPM 121 D2 project. Students should make sure to remove _this_ content from their README.md file and replace it with their own project documentation.
+This is the CMPM 121 D2 project, creating a canvas/ paint tool
