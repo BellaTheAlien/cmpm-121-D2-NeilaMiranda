@@ -22,40 +22,52 @@ const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 const cursor = { active: false, x: 0, y: 0 };
 
 //array to store the strokes
-/*
-const dispatch = new EventTarget();
-
-interface Stroke {
-  points: { x: number; y: number }[];
+interface Point {
+  x: number;
+  y: number;
 }
-const newStroke = [];
-*/
+
+type Line = Point[];
+
+let userDrawing: Line[] = [];
+let isDrawing = false;
 
 //event listeners for the mouse movements
 canvas.addEventListener("mousedown", (e) => {
-  cursor.active = true;
-  cursor.x = e.offsetX;
-  cursor.y = e.offsetY;
-  //newStroke.push({ points: [{ x: cursor.x, y: cursor.y }] });
+  isDrawing = true;
+  const currentStroke: Line = [];
+  userDrawing.push(currentStroke);
+  currentStroke.push({ x: e.offsetX, y: e.offsetY });
+  canvas.dispatchEvent(new CustomEvent("drawing-changed"));
 });
 
 canvas.addEventListener("mouseup", () => {
+  isDrawing = false;
   cursor.active = false;
 });
 
 canvas.addEventListener("mousemove", (e) => {
-  if (cursor.active) {
-    ctx.beginPath();
-    ctx.moveTo(cursor.x, cursor.y);
-    ctx.lineTo(e.offsetX, e.offsetY);
-    ctx.stroke();
-    cursor.x = e.offsetX;
-    cursor.y = e.offsetY;
+  if (!isDrawing) return;
+  const currentStroke = userDrawing[userDrawing.length - 1]!;
+  currentStroke.push({ x: e.offsetX, y: e.offsetY });
+  canvas.dispatchEvent(new CustomEvent("drawing-changed"));
+});
+
+canvas.addEventListener("drawing-changed", () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (const stroke of userDrawing) {
+    if (stroke.length >= 2) {
+      ctx.beginPath();
+      const { x, y } = stroke[0]!;
+      ctx.moveTo(x, y);
+      const remainingPoints = stroke.slice(1);
+      for (const { x, y } of remainingPoints) {
+        ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
   }
-  /*
-    newStroke.push({ points: [{ x: cursor.x, y: cursor.y }] });
-    dispatch.dispatchEvent(new CustomEvent("strokeAdded", { detail: newStroke }));
-    */
 });
 
 //making the clear button
@@ -66,16 +78,6 @@ document.body.append(clearButton);
 
 //the event listener for the clear button
 clearButton.addEventListener("click", () => {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  userDrawing = [];
+  canvas.dispatchEvent(new CustomEvent("drawing-changed"));
 });
-
-/*
-function redraw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  newStroke.forEach((strokes) => {
-    ctx.beginPath();
-    ctx.moveTo(strokes.points[0].x, strokes.points[0].y);
-  });
-}
-dispatch.addEventListener("strokeAdded", redraw);
-*/
