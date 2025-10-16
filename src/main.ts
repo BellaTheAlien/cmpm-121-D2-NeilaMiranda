@@ -22,12 +22,14 @@ const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 const cursor = { active: false, x: 0, y: 0 };
 
 //array to store the strokes
+/*
 const dispatch = new EventTarget();
 
 interface Stroke {
   points: { x: number; y: number }[];
 }
 const newStroke = [];
+*/
 
 //event listeners for the mouse movements
 canvas.addEventListener("mousedown", (e) => {
