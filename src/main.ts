@@ -30,6 +30,7 @@ interface Point {
 type Line = Point[];
 
 let userDrawing: Line[] = [];
+let redoLine: Line[] = [];
 let isDrawing = false;
 
 //event listeners for the mouse movements
@@ -38,6 +39,7 @@ canvas.addEventListener("mousedown", (e) => {
   const currentStroke: Line = [];
   userDrawing.push(currentStroke);
   currentStroke.push({ x: e.offsetX, y: e.offsetY });
+  redoLine = []; // Clear redo stack on new action
   canvas.dispatchEvent(new CustomEvent("drawing-changed"));
 });
 
@@ -79,5 +81,33 @@ document.body.append(clearButton);
 //the event listener for the clear button
 clearButton.addEventListener("click", () => {
   userDrawing = [];
+  redoLine = [];
   canvas.dispatchEvent(new CustomEvent("drawing-changed"));
+});
+
+//creating the undo button
+const undoButton = document.createElement("button");
+undoButton.textContent = "undo";
+undoButton.id = "undo-button";
+document.body.append(undoButton);
+
+// event listener for the undo button
+undoButton.addEventListener("click", () => {
+  if (userDrawing.length > 0) {
+    redoLine.push(userDrawing.pop()!);
+    canvas.dispatchEvent(new CustomEvent("drawing-changed"));
+  }
+});
+
+//redo button
+const redoButton = document.createElement("button");
+redoButton.textContent = "redo";
+redoButton.id = "redo-button";
+document.body.append(redoButton);
+
+redoButton.addEventListener("click", () => {
+  if (redoLine.length > 0) {
+    userDrawing.push(redoLine.pop()!);
+    canvas.dispatchEvent(new CustomEvent("drawing-changed"));
+  }
 });
