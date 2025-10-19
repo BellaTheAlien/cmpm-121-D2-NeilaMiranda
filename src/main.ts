@@ -62,43 +62,72 @@ class Line implements DisplayCanvas {
   }
 }
 
+class Sticker implements DisplayCanvas {
+  x: number;
+  y: number;
+  sticker: string;
+  constructor(x: number, y: number, sticker: string) {
+    this.x = x;
+    this.y = y;
+    this.sticker = sticker;
+  }
+  display(ctx: CanvasRenderingContext2D): void {
+    ctx.font = "30px serif";
+    ctx.fillText(this.sticker, this.x, this.y);
+  }
+}
+
 //changing the mouse curser
 class MarkerPreview implements DisplayCanvas {
   x: number;
   y: number;
   thickness: number;
   sticker: string;
-  constructor(x: number, y: number, thickness: number, sticker: string = "🍡") {
+  constructor(x: number, y: number, thickness: number, sticker: string) {
     this.x = x;
     this.y = y;
     this.thickness = thickness;
     this.sticker = sticker;
   }
   display(ctx: CanvasRenderingContext2D): void {
-    ctx.save();
-    ctx.lineWidth = this.thickness;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.thickness * 2, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.restore();
+    if (currentTool === "sticker") {
+      ctx.font = "30px serif";
+      ctx.fillText(this.sticker, this.x, this.y);
+    } else {
+      ctx.save();
+      ctx.lineWidth = this.thickness;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.thickness * 2, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
   }
 }
 //arrays to store user drawings and redo lines
-let userDrawing: Line[] = [];
-let redoLine: Line[] = [];
+let userDrawing: DisplayCanvas[] = [];
+let redoLine: DisplayCanvas[] = [];
 let currentCommand: Line | null = null;
 let curentPreview: MarkerPreview | null = null;
 let isDrawing = false;
+let currentTool: "line" | "sticker" = "line";
 let currentThickness = THIN_LINE;
 let currentSticker = "🍡";
 
 //event listeners for the mouse movements
 canvas.addEventListener("mousedown", (e) => {
-  isDrawing = true;
-  currentCommand = new Line(e.offsetX, e.offsetY, currentThickness);
-  userDrawing.push(currentCommand);
-  redoLine = []; // Clear redo stack on new action
-  canvas.dispatchEvent(new CustomEvent("drawing-changed"));
+  if (currentTool === "sticker") {
+    const stickerCommand = new Sticker(e.offsetX, e.offsetY, currentSticker);
+    userDrawing.push(stickerCommand);
+    redoLine = [];
+    canvas.dispatchEvent(new CustomEvent("drawing-changed"));
+    return;
+  } else {
+    isDrawing = true;
+    currentCommand = new Line(e.offsetX, e.offsetY, currentThickness);
+    userDrawing.push(currentCommand);
+    redoLine = []; // Clear redo stack on new action
+    canvas.dispatchEvent(new CustomEvent("drawing-changed"));
+  }
 });
 
 canvas.addEventListener("mouseup", () => {
@@ -142,8 +171,10 @@ document.body.append(thinButton);
 
 thinButton.addEventListener("click", () => {
   currentThickness = THIN_LINE;
+  currentTool = "line";
   thinButton.classList.add("selectedTool");
   thickButton.classList.remove("selectedTool");
+  dangoSticker.classList.remove("selectedTool");
 });
 
 const thickButton = document.createElement("button");
@@ -153,8 +184,25 @@ document.body.append(thickButton);
 
 thickButton.addEventListener("click", () => {
   currentThickness = THICK_LINE;
+  currentTool = "line";
   thickButton.classList.add("selectedTool");
   thinButton.classList.remove("selectedTool");
+  dangoSticker.classList.remove("selectedTool");
+});
+
+//emoji/sticker button
+const dangoSticker = document.createElement("button");
+dangoSticker.textContent = "🍡";
+dangoSticker.id = "sticker-button";
+document.body.append(dangoSticker);
+
+//event listener for the sticker button
+dangoSticker.addEventListener("click", () => {
+  currentSticker = "🍡";
+  currentTool = "sticker";
+  thickButton.classList.remove("selectedTool");
+  thinButton.classList.remove("selectedTool");
+  dangoSticker.classList.add("selectedTool");
 });
 
 //making the clear button
@@ -195,17 +243,4 @@ redoButton.addEventListener("click", () => {
     userDrawing.push(redoLine.pop()!);
     canvas.dispatchEvent(new CustomEvent("drawing-changed"));
   }
-});
-
-//emoji/sticker button
-const dangoSticker = document.createElement("button");
-dangoSticker.textContent = "🍡";
-dangoSticker.id = "sticker-button";
-document.body.append(dangoSticker);
-
-//event listener for the sticker button
-dangoSticker.addEventListener("click", () => {
-  currentSticker = "🍡";
-  dangoSticker.classList.add("selectedTool");
-  dangoSticker.classList.remove("selectedTool");
 });
