@@ -20,6 +20,8 @@ document.body.append(canvas);
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 //reading the mouse position
 const cursor = { active: false, x: 0, y: 0 };
+const THIN_LINE = 2;
+const THICK_LINE = 5;
 
 //array to store the strokes
 interface Point {
@@ -35,11 +37,14 @@ interface DisplayCanvas {
 //class for the line strokes
 class Line implements DisplayCanvas {
   points: Point[];
+  thickness: number = THIN_LINE;
 
-  constructor(x: number, y: number) {
+  constructor(x: number, y: number, thickness: number) {
     this.points = [{ x, y }];
+    this.thickness = thickness;
   }
   display(ctx: CanvasRenderingContext2D) {
+    ctx.lineWidth = this.thickness;
     if (this.points.length < 2) return;
     ctx.beginPath();
     const { x, y } = this.points[0]!;
@@ -56,17 +61,17 @@ class Line implements DisplayCanvas {
     this.points.push({ x, y });
   }
 }
-
 //arrays to store user drawings and redo lines
 let userDrawing: Line[] = [];
 let redoLine: Line[] = [];
 let currentCommand: Line | null = null;
 let isDrawing = false;
+let currentThickness = THIN_LINE;
 
 //event listeners for the mouse movements
 canvas.addEventListener("mousedown", (e) => {
   isDrawing = true;
-  currentCommand = new Line(e.offsetX, e.offsetY);
+  currentCommand = new Line(e.offsetX, e.offsetY, currentThickness);
   userDrawing.push(currentCommand);
   redoLine = []; // Clear redo stack on new action
   canvas.dispatchEvent(new CustomEvent("drawing-changed"));
@@ -91,6 +96,32 @@ canvas.addEventListener("drawing-changed", () => {
   for (const stroke of userDrawing) {
     stroke.display(ctx);
   }
+});
+
+//the think and thick line buttons
+const thinButton = document.createElement("button");
+thinButton.textContent = "Thin Line";
+thinButton.id = "thin-button";
+thinButton.classList.add("selectedTool");
+document.body.append(thinButton);
+
+thinButton.addEventListener("click", () => {
+  currentThickness = THIN_LINE;
+  ctx.lineWidth = currentThickness;
+  thinButton.classList.add("selectedTool");
+  thickButton.classList.remove("selectedTool");
+});
+
+const thickButton = document.createElement("button");
+thickButton.textContent = "Thick Line";
+thickButton.id = "thick-button";
+document.body.append(thickButton);
+
+thickButton.addEventListener("click", () => {
+  currentThickness = THICK_LINE;
+  ctx.lineWidth = currentThickness;
+  thickButton.classList.add("selectedTool");
+  thinButton.classList.remove("selectedTool");
 });
 
 //making the clear button
