@@ -66,20 +66,26 @@ class Line implements DisplayCanvas {
 class MarkerPreview implements DisplayCanvas {
   x: number;
   y: number;
-  constructor(x: number, y: number) {
+  thickness: number;
+  constructor(x: number, y: number, thickness: number) {
     this.x = x;
     this.y = y;
+    this.thickness = thickness;
   }
   display(ctx: CanvasRenderingContext2D): void {
-    ctx.font = "24px Arial";
-    ctx.fillText("*", this.x - 8, this.y + 16);
+    ctx.save();
+    ctx.lineWidth = this.thickness;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.thickness * 2, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
   }
 }
 //arrays to store user drawings and redo lines
 let userDrawing: Line[] = [];
 let redoLine: Line[] = [];
 let currentCommand: Line | null = null;
-let cursorCommand: MarkerPreview | null = null;
+let curentPreview: MarkerPreview | null = null;
 let isDrawing = false;
 let currentThickness = THIN_LINE;
 
@@ -99,13 +105,10 @@ canvas.addEventListener("mouseup", () => {
 });
 
 canvas.addEventListener("mousemove", (e) => {
-  cursorCommand = new MarkerPreview(e.offsetX, e.offsetY);
-  cursor.active = true;
-  if (!isDrawing || !currentCommand) {
+  if (!isDrawing) {
+    curentPreview = new MarkerPreview(e.offsetX, e.offsetY, currentThickness);
     canvas.dispatchEvent(new CustomEvent("drawing-changed"));
-    return;
-  }
-  if (e.buttons === 1) {
+  } else if (currentCommand) {
     currentCommand.drag(e.offsetX, e.offsetY);
     canvas.dispatchEvent(new CustomEvent("drawing-changed"));
   }
@@ -117,8 +120,8 @@ canvas.addEventListener("drawing-changed", () => {
   for (const stroke of userDrawing) {
     stroke.display(ctx);
   }
-  if (cursorCommand && cursor.active) {
-    cursorCommand.display(ctx);
+  if (!isDrawing && curentPreview) {
+    curentPreview.display(ctx);
   }
 });
 
