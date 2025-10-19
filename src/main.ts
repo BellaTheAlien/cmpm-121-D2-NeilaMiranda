@@ -107,7 +107,6 @@ document.body.append(thinButton);
 
 thinButton.addEventListener("click", () => {
   currentThickness = THIN_LINE;
-  ctx.lineWidth = currentThickness;
   thinButton.classList.add("selectedTool");
   thickButton.classList.remove("selectedTool");
 });
@@ -119,7 +118,6 @@ document.body.append(thickButton);
 
 thickButton.addEventListener("click", () => {
   currentThickness = THICK_LINE;
-  ctx.lineWidth = currentThickness;
   thickButton.classList.add("selectedTool");
   thinButton.classList.remove("selectedTool");
 });
