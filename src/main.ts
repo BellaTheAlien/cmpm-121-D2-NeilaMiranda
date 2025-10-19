@@ -72,7 +72,7 @@ class Sticker implements DisplayCanvas {
     this.sticker = sticker;
   }
   display(ctx: CanvasRenderingContext2D): void {
-    ctx.font = "30px serif";
+    ctx.font = "24px serif";
     ctx.fillText(this.sticker, this.x, this.y);
   }
 }
@@ -91,7 +91,7 @@ class MarkerPreview implements DisplayCanvas {
   }
   display(ctx: CanvasRenderingContext2D): void {
     if (currentTool === "sticker") {
-      ctx.font = "30px serif";
+      ctx.font = "24px serif";
       ctx.fillText(this.sticker, this.x, this.y);
     } else {
       ctx.save();
@@ -174,6 +174,8 @@ thinButton.addEventListener("click", () => {
   currentTool = "line";
   thinButton.classList.add("selectedTool");
   thickButton.classList.remove("selectedTool");
+  tamaleSticker.classList.remove("selectedTool");
+  teaSticker.classList.remove("selectedTool");
   dangoSticker.classList.remove("selectedTool");
 });
 
@@ -187,6 +189,8 @@ thickButton.addEventListener("click", () => {
   currentTool = "line";
   thickButton.classList.add("selectedTool");
   thinButton.classList.remove("selectedTool");
+  tamaleSticker.classList.remove("selectedTool");
+  teaSticker.classList.remove("selectedTool");
   dangoSticker.classList.remove("selectedTool");
 });
 
@@ -202,7 +206,39 @@ dangoSticker.addEventListener("click", () => {
   currentTool = "sticker";
   thickButton.classList.remove("selectedTool");
   thinButton.classList.remove("selectedTool");
+  tamaleSticker.classList.remove("selectedTool");
+  teaSticker.classList.remove("selectedTool");
   dangoSticker.classList.add("selectedTool");
+});
+const teaSticker = document.createElement("button");
+teaSticker.textContent = "🍵";
+teaSticker.id = "sticker-button-tea";
+document.body.append(teaSticker);
+
+//event listener for the tea sticker button
+teaSticker.addEventListener("click", () => {
+  currentSticker = "🍵";
+  currentTool = "sticker";
+  thickButton.classList.remove("selectedTool");
+  thinButton.classList.remove("selectedTool");
+  dangoSticker.classList.remove("selectedTool");
+  tamaleSticker.classList.remove("selectedTool");
+  teaSticker.classList.add("selectedTool");
+});
+const tamaleSticker = document.createElement("button");
+tamaleSticker.textContent = "🫔";
+tamaleSticker.id = "sticker-button-tamale";
+document.body.append(tamaleSticker);
+
+//event listener for the tamale sticker button
+tamaleSticker.addEventListener("click", () => {
+  currentSticker = "🫔";
+  currentTool = "sticker";
+  thickButton.classList.remove("selectedTool");
+  thinButton.classList.remove("selectedTool");
+  dangoSticker.classList.remove("selectedTool");
+  teaSticker.classList.remove("selectedTool");
+  tamaleSticker.classList.add("selectedTool");
 });
 
 //making the clear button
