@@ -67,10 +67,12 @@ class MarkerPreview implements DisplayCanvas {
   x: number;
   y: number;
   thickness: number;
-  constructor(x: number, y: number, thickness: number) {
+  sticker: string;
+  constructor(x: number, y: number, thickness: number, sticker: string = "🍡") {
     this.x = x;
     this.y = y;
     this.thickness = thickness;
+    this.sticker = sticker;
   }
   display(ctx: CanvasRenderingContext2D): void {
     ctx.save();
@@ -88,6 +90,7 @@ let currentCommand: Line | null = null;
 let curentPreview: MarkerPreview | null = null;
 let isDrawing = false;
 let currentThickness = THIN_LINE;
+let currentSticker = "🍡";
 
 //event listeners for the mouse movements
 canvas.addEventListener("mousedown", (e) => {
@@ -106,7 +109,12 @@ canvas.addEventListener("mouseup", () => {
 
 canvas.addEventListener("mousemove", (e) => {
   if (!isDrawing) {
-    curentPreview = new MarkerPreview(e.offsetX, e.offsetY, currentThickness);
+    curentPreview = new MarkerPreview(
+      e.offsetX,
+      e.offsetY,
+      currentThickness,
+      currentSticker,
+    );
     canvas.dispatchEvent(new CustomEvent("drawing-changed"));
   } else if (currentCommand) {
     currentCommand.drag(e.offsetX, e.offsetY);
@@ -187,4 +195,17 @@ redoButton.addEventListener("click", () => {
     userDrawing.push(redoLine.pop()!);
     canvas.dispatchEvent(new CustomEvent("drawing-changed"));
   }
+});
+
+//emoji/sticker button
+const dangoSticker = document.createElement("button");
+dangoSticker.textContent = "🍡";
+dangoSticker.id = "sticker-button";
+document.body.append(dangoSticker);
+
+//event listener for the sticker button
+dangoSticker.addEventListener("click", () => {
+  currentSticker = "🍡";
+  dangoSticker.classList.add("selectedTool");
+  dangoSticker.classList.remove("selectedTool");
 });
