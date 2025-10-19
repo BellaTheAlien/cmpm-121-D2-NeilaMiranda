@@ -27,31 +27,61 @@ interface Point {
   y: number;
 }
 
-type Line = Point[];
+//interface for displaying on canvas
+interface DisplayCanvas {
+  display(ctx: CanvasRenderingContext2D): void;
+}
 
+//class for the line strokes
+class Line implements DisplayCanvas {
+  points: Point[];
+
+  constructor(x: number, y: number) {
+    this.points = [{ x, y }];
+  }
+  display(ctx: CanvasRenderingContext2D) {
+    if (this.points.length < 2) return;
+    ctx.beginPath();
+    const { x, y } = this.points[0]!;
+    ctx.moveTo(x, y);
+
+    //looping through the points to create the line
+    for (const { x, y } of this.points.slice(1)) {
+      ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+  //method to add points to the line
+  drag(x: number, y: number) {
+    this.points.push({ x, y });
+  }
+}
+
+//arrays to store user drawings and redo lines
 let userDrawing: Line[] = [];
 let redoLine: Line[] = [];
+let currentCommand: Line | null = null;
 let isDrawing = false;
 
 //event listeners for the mouse movements
 canvas.addEventListener("mousedown", (e) => {
   isDrawing = true;
-  const currentStroke: Line = [];
-  userDrawing.push(currentStroke);
-  currentStroke.push({ x: e.offsetX, y: e.offsetY });
+  currentCommand = new Line(e.offsetX, e.offsetY);
+  userDrawing.push(currentCommand);
   redoLine = []; // Clear redo stack on new action
   canvas.dispatchEvent(new CustomEvent("drawing-changed"));
 });
 
 canvas.addEventListener("mouseup", () => {
+  currentCommand = null;
   isDrawing = false;
   cursor.active = false;
 });
 
 canvas.addEventListener("mousemove", (e) => {
-  if (!isDrawing) return;
-  const currentStroke = userDrawing[userDrawing.length - 1]!;
-  currentStroke.push({ x: e.offsetX, y: e.offsetY });
+  if (!isDrawing || !currentCommand) return;
+
+  currentCommand.drag(e.offsetX, e.offsetY);
   canvas.dispatchEvent(new CustomEvent("drawing-changed"));
 });
 
@@ -59,16 +89,7 @@ canvas.addEventListener("drawing-changed", () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   for (const stroke of userDrawing) {
-    if (stroke.length >= 2) {
-      ctx.beginPath();
-      const { x, y } = stroke[0]!;
-      ctx.moveTo(x, y);
-      const remainingPoints = stroke.slice(1);
-      for (const { x, y } of remainingPoints) {
-        ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-    }
+    stroke.display(ctx);
   }
 });
 
