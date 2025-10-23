@@ -231,6 +231,8 @@ customButton.addEventListener("click", () => {
     });
 
     document.body.append(button);
+  } else if (customSticker === "") {
+    alert("No sticker added. Please enter a valid emoji.");
   }
 });
 
