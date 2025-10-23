@@ -34,6 +34,26 @@ interface DisplayCanvas {
   display(ctx: CanvasRenderingContext2D): void;
 }
 
+//stikers data structure
+const stickers = [
+  {
+    id: "dango",
+    text: "🍡",
+    label: "Dango",
+  },
+  {
+    id: "tea",
+    text: "🍵",
+    label: "Tea",
+  },
+  {
+    id: "tamale",
+    text: "🫔",
+    label: "Tamale",
+  },
+];
+const stickerButtons: HTMLButtonElement[] = [];
+
 //class for the line strokes
 class Line implements DisplayCanvas {
   points: Point[];
@@ -162,6 +182,26 @@ canvas.addEventListener("drawing-changed", () => {
   }
 });
 
+//sticker buttons
+stickers.forEach((sticker) => {
+  const button = document.createElement("button");
+  button.textContent = sticker.text;
+  button.id = `sticker-button-${sticker.id}`;
+
+  button.addEventListener("click", () => {
+    currentSticker = sticker.text;
+    currentTool = "sticker";
+
+    stickerButtons.forEach((btn) => btn.classList.remove("selectedTool"));
+    thickButton.classList.remove("selectedTool");
+    thinButton.classList.remove("selectedTool");
+    button.classList.add("selectedTool");
+    stickerButtons.push(button);
+  });
+
+  document.body.append(button);
+});
+
 //the think and thick line buttons
 const thinButton = document.createElement("button");
 thinButton.textContent = "Thin Line";
@@ -174,9 +214,6 @@ thinButton.addEventListener("click", () => {
   currentTool = "line";
   thinButton.classList.add("selectedTool");
   thickButton.classList.remove("selectedTool");
-  tamaleSticker.classList.remove("selectedTool");
-  teaSticker.classList.remove("selectedTool");
-  dangoSticker.classList.remove("selectedTool");
 });
 
 const thickButton = document.createElement("button");
@@ -189,56 +226,6 @@ thickButton.addEventListener("click", () => {
   currentTool = "line";
   thickButton.classList.add("selectedTool");
   thinButton.classList.remove("selectedTool");
-  tamaleSticker.classList.remove("selectedTool");
-  teaSticker.classList.remove("selectedTool");
-  dangoSticker.classList.remove("selectedTool");
-});
-
-//emoji/sticker button
-const dangoSticker = document.createElement("button");
-dangoSticker.textContent = "🍡";
-dangoSticker.id = "sticker-button";
-document.body.append(dangoSticker);
-
-//event listener for the sticker button
-dangoSticker.addEventListener("click", () => {
-  currentSticker = "🍡";
-  currentTool = "sticker";
-  thickButton.classList.remove("selectedTool");
-  thinButton.classList.remove("selectedTool");
-  tamaleSticker.classList.remove("selectedTool");
-  teaSticker.classList.remove("selectedTool");
-  dangoSticker.classList.add("selectedTool");
-});
-const teaSticker = document.createElement("button");
-teaSticker.textContent = "🍵";
-teaSticker.id = "sticker-button-tea";
-document.body.append(teaSticker);
-
-//event listener for the tea sticker button
-teaSticker.addEventListener("click", () => {
-  currentSticker = "🍵";
-  currentTool = "sticker";
-  thickButton.classList.remove("selectedTool");
-  thinButton.classList.remove("selectedTool");
-  dangoSticker.classList.remove("selectedTool");
-  tamaleSticker.classList.remove("selectedTool");
-  teaSticker.classList.add("selectedTool");
-});
-const tamaleSticker = document.createElement("button");
-tamaleSticker.textContent = "🫔";
-tamaleSticker.id = "sticker-button-tamale";
-document.body.append(tamaleSticker);
-
-//event listener for the tamale sticker button
-tamaleSticker.addEventListener("click", () => {
-  currentSticker = "🫔";
-  currentTool = "sticker";
-  thickButton.classList.remove("selectedTool");
-  thinButton.classList.remove("selectedTool");
-  dangoSticker.classList.remove("selectedTool");
-  teaSticker.classList.remove("selectedTool");
-  tamaleSticker.classList.add("selectedTool");
 });
 
 //making the clear button
