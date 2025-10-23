@@ -202,6 +202,38 @@ stickers.forEach((sticker) => {
   document.body.append(button);
 });
 
+const customButton = document.createElement("button");
+customButton.textContent = "Custom Sticker";
+customButton.id = "custom-sticker-button";
+document.body.append(customButton);
+
+customButton.addEventListener("click", () => {
+  //promt to add a custom sticker
+  const customSticker = prompt("Add a custom sticker (emoji):", "😀");
+  if (customSticker) {
+    stickers.push({
+      id: "custom",
+      text: customSticker,
+      label: "Custom Sticker",
+    });
+    const button = document.createElement("button");
+    button.textContent = customSticker;
+    button.id = `sticker-button-custom`;
+
+    button.addEventListener("click", () => {
+      currentSticker = customSticker;
+      currentTool = "sticker";
+      stickerButtons.forEach((btn) => btn.classList.remove("selectedTool"));
+      thickButton.classList.remove("selectedTool");
+      thinButton.classList.remove("selectedTool");
+      button.classList.add("selectedTool");
+      stickerButtons.push(button);
+    });
+
+    document.body.append(button);
+  }
+});
+
 //the think and thick line buttons
 const thinButton = document.createElement("button");
 thinButton.textContent = "Thin Line";
