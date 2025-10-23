@@ -193,6 +193,11 @@ canvas.addEventListener("mousemove", (e) => {
   }
 });
 
+canvas.addEventListener("mouseout", () => {
+  currentCommand = null;
+  canvas.dispatchEvent(new CustomEvent("drawing-changed"));
+});
+
 canvas.addEventListener("drawing-changed", () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -325,8 +330,9 @@ createToolButton({
   id: "export-button",
   text: "export",
   onClick: () => {
-    ctx.scale(1024, 1024);
     ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.scale(1024, 1024);
     const anchor = document.createElement("a");
     anchor.href = canvas.toDataURL("image/png");
     anchor.download = "sketchpad.png";
