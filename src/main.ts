@@ -1,35 +1,34 @@
-//import exampleIconUrl from "./noun-paperclip-7598668-00449F.png";
 import "./style.css";
 
 document.body.innerHTML = `
 `;
 
-//title value
+// title value
 const h1Element = document.createElement("h1");
 h1Element.textContent = "Sticker SketchBook";
 document.body.append(h1Element);
 
-//canvas block
+// canvas block
 const canvas = document.createElement("canvas");
 canvas.id = "canvas";
 canvas.width = 256;
 canvas.height = 256;
 document.body.append(canvas);
 
-//context for the canvas
-const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-//reading the mouse position
+// context for the canvas
+const ctx = canvas.getContext("2d")!;
+// reading the mouse position
 const cursor = { active: false, x: 0, y: 0 };
 const THIN_LINE = 2;
 const THICK_LINE = 5;
 
-//array to store the strokes
+// array to store the strokes
 interface Point {
   x: number;
   y: number;
 }
 
-//interface for displaying on canvas
+// interface for displaying on canvas
 interface DisplayCanvas {
   display(ctx: CanvasRenderingContext2D): void;
 }
@@ -42,7 +41,7 @@ interface ToolButtonConfig {
   isSelected: boolean;
 }
 
-//stikers data structure
+// stikers data structure
 const stickers = [
   {
     id: "dango",
@@ -77,7 +76,7 @@ function createToolButton(config: ToolButtonConfig): HTMLButtonElement {
   return button;
 }
 
-//class for the line strokes
+// class for the line strokes
 class Line implements DisplayCanvas {
   points: Point[];
   thickness: number = THIN_LINE;
@@ -120,7 +119,7 @@ class Sticker implements DisplayCanvas {
   }
 }
 
-//changing the mouse curser
+// changing the mouse curser
 class MarkerPreview implements DisplayCanvas {
   x: number;
   y: number;
@@ -156,7 +155,7 @@ let currentTool: "line" | "sticker" = "line";
 let currentThickness = THIN_LINE;
 let currentSticker = "🍡";
 
-//event listeners for the mouse movements
+// event listeners for the mouse movements
 canvas.addEventListener("mousedown", (e) => {
   if (currentTool === "sticker") {
     const stickerCommand = new Sticker(e.offsetX, e.offsetY, currentSticker);
@@ -205,7 +204,7 @@ canvas.addEventListener("drawing-changed", () => {
   }
 });
 
-//sticker buttons
+// sticker buttons
 stickers.forEach((sticker) => {
   const button = document.createElement("button");
   button.textContent = sticker.text;
@@ -231,7 +230,7 @@ customButton.id = "custom-sticker-button";
 document.body.append(customButton);
 
 customButton.addEventListener("click", () => {
-  //promt to add a custom sticker
+  // promt to add a custom sticker
   const customSticker = prompt("Add a custom sticker (emoji):", "😀");
   if (customSticker) {
     stickers.push({
@@ -259,7 +258,7 @@ customButton.addEventListener("click", () => {
   }
 });
 
-//the think and thick line buttons
+// the think and thick line buttons
 const thinButton = createToolButton({
   id: "thin-button",
   text: "Thin Line",
@@ -295,7 +294,7 @@ createToolButton({
   isSelected: false,
 });
 
-//creating the undo button
+// creating the undo button
 createToolButton({
   id: "undo-button",
   text: "undo",
@@ -308,7 +307,7 @@ createToolButton({
   isSelected: false,
 });
 
-//redo button
+// redo button
 createToolButton({
   id: "redo-button",
   text: "redo",
@@ -317,6 +316,21 @@ createToolButton({
       userDrawing.push(redoLine.pop()!);
       canvas.dispatchEvent(new CustomEvent("drawing-changed"));
     }
+  },
+  isSelected: false,
+});
+
+// export button
+createToolButton({
+  id: "export-button",
+  text: "export",
+  onClick: () => {
+    ctx.scale(1024, 1024);
+    ctx.fillStyle = "white";
+    const anchor = document.createElement("a");
+    anchor.href = canvas.toDataURL("image/png");
+    anchor.download = "sketchpad.png";
+    anchor.click();
   },
   isSelected: false,
 });
