@@ -34,6 +34,14 @@ interface DisplayCanvas {
   display(ctx: CanvasRenderingContext2D): void;
 }
 
+// button interfaces
+interface ToolButtonConfig {
+  id: string;
+  text: string;
+  onClick: () => void;
+  isSelected: boolean;
+}
+
 //stikers data structure
 const stickers = [
   {
@@ -53,6 +61,21 @@ const stickers = [
   },
 ];
 const stickerButtons: HTMLButtonElement[] = [];
+
+// function for the tool buttons
+function createToolButton(config: ToolButtonConfig): HTMLButtonElement {
+  const button = document.createElement("button");
+  button.id = config.id;
+  button.textContent = config.text;
+  button.addEventListener("click", config.onClick);
+
+  if (config.isSelected) {
+    button.classList.add("selectedTool");
+  }
+
+  document.body.append(button);
+  return button;
+}
 
 //class for the line strokes
 class Line implements DisplayCanvas {
@@ -237,67 +260,63 @@ customButton.addEventListener("click", () => {
 });
 
 //the think and thick line buttons
-const thinButton = document.createElement("button");
-thinButton.textContent = "Thin Line";
-thinButton.id = "thin-button";
-thinButton.classList.add("selectedTool");
-document.body.append(thinButton);
-
-thinButton.addEventListener("click", () => {
-  currentThickness = THIN_LINE;
-  currentTool = "line";
-  thinButton.classList.add("selectedTool");
-  thickButton.classList.remove("selectedTool");
+const thinButton = createToolButton({
+  id: "thin-button",
+  text: "Thin Line",
+  onClick: () => {
+    currentThickness = THIN_LINE;
+    currentTool = "line";
+    thinButton.classList.add("selectedTool");
+    thickButton.classList.remove("selectedTool");
+  },
+  isSelected: true,
 });
 
-const thickButton = document.createElement("button");
-thickButton.textContent = "Thick Line";
-thickButton.id = "thick-button";
-document.body.append(thickButton);
-
-thickButton.addEventListener("click", () => {
-  currentThickness = THICK_LINE;
-  currentTool = "line";
-  thickButton.classList.add("selectedTool");
-  thinButton.classList.remove("selectedTool");
+const thickButton = createToolButton({
+  id: "thick-button",
+  text: "Thick Line",
+  onClick: () => {
+    currentThickness = THICK_LINE;
+    currentTool = "line";
+    thickButton.classList.add("selectedTool");
+    thinButton.classList.remove("selectedTool");
+  },
+  isSelected: false,
 });
 
-//making the clear button
-const clearButton = document.createElement("button");
-clearButton.textContent = "clear";
-clearButton.id = "clear-button";
-document.body.append(clearButton);
-
-//the event listener for the clear button
-clearButton.addEventListener("click", () => {
-  userDrawing = [];
-  redoLine = [];
-  canvas.dispatchEvent(new CustomEvent("drawing-changed"));
+createToolButton({
+  id: "clear-button",
+  text: "Clear",
+  onClick: () => {
+    userDrawing = [];
+    redoLine = [];
+    canvas.dispatchEvent(new CustomEvent("drawing-changed"));
+  },
+  isSelected: false,
 });
 
 //creating the undo button
-const undoButton = document.createElement("button");
-undoButton.textContent = "undo";
-undoButton.id = "undo-button";
-document.body.append(undoButton);
-
-// event listener for the undo button
-undoButton.addEventListener("click", () => {
-  if (userDrawing.length > 0) {
-    redoLine.push(userDrawing.pop()!);
-    canvas.dispatchEvent(new CustomEvent("drawing-changed"));
-  }
+createToolButton({
+  id: "undo-button",
+  text: "undo",
+  onClick: () => {
+    if (userDrawing.length > 0) {
+      redoLine.push(userDrawing.pop()!);
+      canvas.dispatchEvent(new CustomEvent("drawing-changed"));
+    }
+  },
+  isSelected: false,
 });
 
 //redo button
-const redoButton = document.createElement("button");
-redoButton.textContent = "redo";
-redoButton.id = "redo-button";
-document.body.append(redoButton);
-
-redoButton.addEventListener("click", () => {
-  if (redoLine.length > 0) {
-    userDrawing.push(redoLine.pop()!);
-    canvas.dispatchEvent(new CustomEvent("drawing-changed"));
-  }
+createToolButton({
+  id: "redo-button",
+  text: "redo",
+  onClick: () => {
+    if (redoLine.length > 0) {
+      userDrawing.push(redoLine.pop()!);
+      canvas.dispatchEvent(new CustomEvent("drawing-changed"));
+    }
+  },
+  isSelected: false,
 });
