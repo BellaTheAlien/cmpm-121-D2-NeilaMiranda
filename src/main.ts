@@ -328,8 +328,13 @@ createToolButton({
 //making a temp canvas to re scale for the export
 const tempCanvas = document.createElement("canvas");
 const tempCtx = tempCanvas.getContext("2d")!;
+const exportWidth = 1024;
+const exportHeight = 1024;
 tempCanvas.width = canvas.width;
 tempCanvas.height = canvas.height;
+
+const scaleWidth = exportWidth / canvas.width;
+const scleHeight = exportHeight / canvas.height;
 
 // export button
 createToolButton({
@@ -338,7 +343,7 @@ createToolButton({
   onClick: () => {
     tempCtx.fillStyle = "white";
     tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-    tempCtx.scale(1024, 1024);
+    tempCtx.scale(scaleWidth, scleHeight);
     const anchor = document.createElement("a");
     anchor.href = tempCanvas.toDataURL("image/png");
     anchor.download = "sketchpad.png";
