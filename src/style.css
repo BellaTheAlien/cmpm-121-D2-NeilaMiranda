@@ -1,5 +1,6 @@
 #canvas {
   border: 1px solid black;
+  border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -7,4 +8,39 @@
   background-color: darkgray;
   color: black;
   border: 2px solid white;
+}
+
+.button {
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.button:hover {
+  background-color: grey;
+  transform: translateY(-1px);
+}
+
+.selectedTool {
+  background-color: palevioletred;
+  color: white;
+  border: 2px solid #fff;
+  font-weight: bold;
+}
+
+#clear-button, #undo-button, #redo-button, #export-button {
+  margin-top: 8px;
+}
+
+.sticker-group,
+.line-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
