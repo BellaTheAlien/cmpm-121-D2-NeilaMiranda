@@ -149,13 +149,19 @@ class MarkerPreview implements DisplayCanvas {
 let userDrawing: DisplayCanvas[] = [];
 let redoLine: DisplayCanvas[] = [];
 let currentCommand: Line | null = null;
-let curentPreview: MarkerPreview | null = null;
+let currentPreview: MarkerPreview | null = null;
 let isDrawing = false;
 let currentTool: "line" | "sticker" = "line";
 let currentThickness = THIN_LINE;
 let currentSticker = "🍡";
 
 // event listeners for the mouse movements
+
+canvas.addEventListener("mouseout", () => {
+  currentCommand = null;
+  currentPreview = null;
+  canvas.dispatchEvent(new CustomEvent("drawing-changed"));
+});
 canvas.addEventListener("mousedown", (e) => {
   if (currentTool === "sticker") {
     const stickerCommand = new Sticker(e.offsetX, e.offsetY, currentSticker);
@@ -180,7 +186,7 @@ canvas.addEventListener("mouseup", () => {
 
 canvas.addEventListener("mousemove", (e) => {
   if (!isDrawing) {
-    curentPreview = new MarkerPreview(
+    currentPreview = new MarkerPreview(
       e.offsetX,
       e.offsetY,
       currentThickness,
@@ -204,8 +210,8 @@ canvas.addEventListener("drawing-changed", () => {
   for (const stroke of userDrawing) {
     stroke.display(ctx);
   }
-  if (!isDrawing && curentPreview) {
-    curentPreview.display(ctx);
+  if (!isDrawing && currentPreview) {
+    currentPreview.display(ctx);
   }
 });
 
