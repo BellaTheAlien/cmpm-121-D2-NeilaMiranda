@@ -3,11 +3,13 @@
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #f5f1c9;
 }
 .selectedTool {
-  background-color: darkgray;
-  color: black;
-  border: 2px solid white;
+  background-color: palevioletred;
+  color: white;
+  border: 2px solid #fff;
+  font-weight: bold;
 }
 
 .button {
@@ -24,13 +26,6 @@
 .button:hover {
   background-color: grey;
   transform: translateY(-1px);
-}
-
-.selectedTool {
-  background-color: palevioletred;
-  color: white;
-  border: 2px solid #fff;
-  font-weight: bold;
 }
 
 #clear-button, #undo-button, #redo-button, #export-button {

@@ -345,7 +345,7 @@ createToolButton({
     tempCanvas.width = exportWidth;
     tempCanvas.height = exportHeight;
 
-    tempCtx.fillStyle = "white";
+    tempCtx.fillStyle = "#f5f1c9";
     tempCtx.fillRect(0, 0, exportWidth, exportHeight);
 
     const scaleWidth = exportWidth / canvas.width;
