@@ -20,7 +20,7 @@ const ctx = canvas.getContext("2d")!;
 // reading the mouse position
 const cursor = { active: false, x: 0, y: 0 };
 const THIN_LINE = 2;
-const THICK_LINE = 5;
+const THICK_LINE = 7;
 
 // array to store the strokes
 interface Point {
@@ -92,13 +92,13 @@ class Line implements DisplayCanvas {
     const { x, y } = this.points[0]!;
     ctx.moveTo(x, y);
 
-    //looping through the points to create the line
+    // looping through the points to create the line
     for (const { x, y } of this.points.slice(1)) {
       ctx.lineTo(x, y);
     }
     ctx.stroke();
   }
-  //method to add points to the line
+  // method to add points to the line
   drag(x: number, y: number) {
     this.points.push({ x, y });
   }
@@ -139,7 +139,7 @@ class MarkerPreview implements DisplayCanvas {
       ctx.save();
       ctx.lineWidth = this.thickness;
       ctx.beginPath();
-      ctx.arc(this.x, this.y, this.thickness * 2, 0, Math.PI * 2);
+      ctx.arc(this.x, this.y, this.thickness * 1.5, 0, Math.PI * 2);
       ctx.stroke();
       ctx.restore();
     }
@@ -236,7 +236,7 @@ document.body.append(customButton);
 
 customButton.addEventListener("click", () => {
   // promt to add a custom sticker
-  const customSticker = prompt("Add a custom sticker (emoji):", "😀");
+  const customSticker = prompt("Add a custom sticker (emoji):", "🥞");
   if (customSticker) {
     stickers.push({
       id: "custom",
