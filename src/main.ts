@@ -1,7 +1,6 @@
 import "./style.css";
 
 document.body.innerHTML = `
-<div class = "tool-bar"></div>
 `;
 
 // title value
@@ -23,8 +22,21 @@ const cursor = { active: false, x: 0, y: 0 };
 const THIN_LINE = 2;
 const THICK_LINE = 7;
 
-const toolBar = document.createElement("tool-bar");
+// grouping the tools into a style bar
+const toolBar = document.createElement("div");
 document.body.append(toolBar);
+
+// -- Checks what tools are highlighted --
+const highlightTool: HTMLButtonElement[] = [];
+
+function setActiveTool(selected: HTMLButtonElement) {
+  // loop though any selected buttons and revome them
+  highlightTool.forEach((btn) => {
+    btn.classList.remove("selectedTool");
+  });
+  //add the class to the button that is clicked on
+  selected.classList.add("selectedTool");
+}
 
 // array to store the strokes
 interface Point {
@@ -228,15 +240,18 @@ stickers.forEach((sticker) => {
   button.addEventListener("click", () => {
     currentSticker = sticker.text;
     currentTool = "sticker";
+    setActiveTool(button);
 
-    stickerButtons.forEach((btn) => btn.classList.remove("selectedTool"));
-    thickButton.classList.remove("selectedTool");
-    thinButton.classList.remove("selectedTool");
-    button.classList.add("selectedTool");
-    stickerButtons.push(button);
+    //stickerButtons.forEach((btn) => btn.classList.remove("selectedTool"));
+    //thickButton.classList.remove("selectedTool");
+    //thinButton.classList.remove("selectedTool");
+    //button.classList.add("selectedTool");
+    //stickerButtons.push(button);
   });
 
   toolBar.append(button);
+  stickerButtons.push(button);
+  highlightTool.push(button);
 });
 
 const customButton = document.createElement("button");
@@ -260,14 +275,16 @@ customButton.addEventListener("click", () => {
     button.addEventListener("click", () => {
       currentSticker = customSticker;
       currentTool = "sticker";
-      stickerButtons.forEach((btn) => btn.classList.remove("selectedTool"));
-      thickButton.classList.remove("selectedTool");
-      thinButton.classList.remove("selectedTool");
-      button.classList.add("selectedTool");
+      setActiveTool(button);
+      //stickerButtons.forEach((btn) => btn.classList.remove("selectedTool"));
+      //thickButton.classList.remove("selectedTool");
+      //thinButton.classList.remove("selectedTool");
+      //button.classList.add("selectedTool");
       stickerButtons.push(button);
     });
 
     toolBar.append(button);
+    highlightTool.push(button);
   } else if (customSticker === "") {
     alert("No sticker added. Please enter a valid emoji.");
   }
@@ -280,11 +297,13 @@ const thinButton = createToolButton({
   onClick: () => {
     currentThickness = THIN_LINE;
     currentTool = "line";
-    thinButton.classList.add("selectedTool");
-    thickButton.classList.remove("selectedTool");
+    setActiveTool(thinButton);
+    //thinButton.classList.add("selectedTool");
+    //thickButton.classList.remove("selectedTool");
   },
   isSelected: true,
 });
+highlightTool.push(thinButton);
 
 const thickButton = createToolButton({
   id: "thick-button",
@@ -292,11 +311,13 @@ const thickButton = createToolButton({
   onClick: () => {
     currentThickness = THICK_LINE;
     currentTool = "line";
-    thickButton.classList.add("selectedTool");
-    thinButton.classList.remove("selectedTool");
+    setActiveTool(thickButton);
+    //thickButton.classList.add("selectedTool");
+    //thinButton.classList.remove("selectedTool");
   },
   isSelected: false,
 });
+highlightTool.push(thickButton);
 
 createToolButton({
   id: "clear-button",
