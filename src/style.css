@@ -12,7 +12,7 @@
   font-weight: bold;
 }
 
-.button {
+button {
   padding: 8px 12px;
   font-size: 14px;
   cursor: pointer;
@@ -23,9 +23,17 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.button:hover {
-  background-color: grey;
+button:hover {
+  background-color: rgb(237, 166, 243);
   transform: translateY(-1px);
+}
+
+tool-bar {
+  display: flex;
+  gap: 12px;
+  background-color: rgb(255, 255, 255);
+  align-items: center;
+  justify-content: left;
 }
 
 #clear-button, #undo-button, #redo-button, #export-button {

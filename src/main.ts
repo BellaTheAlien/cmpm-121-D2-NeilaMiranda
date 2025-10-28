@@ -1,6 +1,7 @@
 import "./style.css";
 
 document.body.innerHTML = `
+<div class = "tool-bar"></div>
 `;
 
 // title value
@@ -21,6 +22,9 @@ const ctx = canvas.getContext("2d")!;
 const cursor = { active: false, x: 0, y: 0 };
 const THIN_LINE = 2;
 const THICK_LINE = 7;
+
+const toolBar = document.createElement("tool-bar");
+document.body.append(toolBar);
 
 // array to store the strokes
 interface Point {
@@ -72,7 +76,7 @@ function createToolButton(config: ToolButtonConfig): HTMLButtonElement {
     button.classList.add("selectedTool");
   }
 
-  document.body.append(button);
+  toolBar.append(button);
   return button;
 }
 
@@ -232,13 +236,13 @@ stickers.forEach((sticker) => {
     stickerButtons.push(button);
   });
 
-  document.body.append(button);
+  toolBar.append(button);
 });
 
 const customButton = document.createElement("button");
 customButton.textContent = "Custom Sticker";
 customButton.id = "custom-sticker-button";
-document.body.append(customButton);
+toolBar.append(customButton);
 
 customButton.addEventListener("click", () => {
   // promt to add a custom sticker
@@ -263,7 +267,7 @@ customButton.addEventListener("click", () => {
       stickerButtons.push(button);
     });
 
-    document.body.append(button);
+    toolBar.append(button);
   } else if (customSticker === "") {
     alert("No sticker added. Please enter a valid emoji.");
   }
