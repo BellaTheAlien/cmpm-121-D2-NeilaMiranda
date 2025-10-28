@@ -30,7 +30,6 @@ document.body.append(toolBar);
 const colorPicker = document.createElement("input");
 colorPicker.type = "color";
 colorPicker.value = "#000";
-colorPicker.title = "Choose brush color";
 toolBar.appendChild(colorPicker);
 
 let currentColor = "#000";
@@ -108,10 +107,12 @@ function createToolButton(config: ToolButtonConfig): HTMLButtonElement {
 class Line implements DisplayCanvas {
   points: Point[];
   thickness: number = THIN_LINE;
+  color: string;
 
-  constructor(x: number, y: number, thickness: number) {
+  constructor(x: number, y: number, thickness: number, color: string) {
     this.points = [{ x, y }];
     this.thickness = thickness;
+    this.color = color;
   }
   display(ctx: CanvasRenderingContext2D) {
     ctx.lineWidth = this.thickness;
@@ -119,8 +120,8 @@ class Line implements DisplayCanvas {
     ctx.beginPath();
     const { x, y } = this.points[0]!;
     ctx.moveTo(x, y);
-    ctx.strokeStyle = currentColor;
-    ctx.fillStyle = currentColor;
+    ctx.strokeStyle = this.color;
+    ctx.fillStyle = this.color;
 
     // looping through the points to create the line
     for (const { x, y } of this.points.slice(1)) {
@@ -201,7 +202,12 @@ canvas.addEventListener("mousedown", (e) => {
     return;
   } else {
     isDrawing = true;
-    currentCommand = new Line(e.offsetX, e.offsetY, currentThickness);
+    currentCommand = new Line(
+      e.offsetX,
+      e.offsetY,
+      currentThickness,
+      currentColor,
+    );
     userDrawing.push(currentCommand);
     redoLine = []; // Clear redo stack on new action
     canvas.dispatchEvent(new CustomEvent("drawing-changed"));
