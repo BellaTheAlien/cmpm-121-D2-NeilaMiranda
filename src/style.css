@@ -35,6 +35,18 @@ tool-bar {
   align-items: center;
   justify-content: left;
 }
+input {
+  cursor: pointer;
+  border: 1px solid lightgrey;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+input:hover {
+  background-color: rgb(237, 166, 243);
+  transform: translateY(-1px);
+}
 
 #clear-button, #undo-button, #redo-button, #export-button {
   margin-top: 8px;

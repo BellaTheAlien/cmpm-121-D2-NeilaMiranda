@@ -26,6 +26,18 @@ const THICK_LINE = 7;
 const toolBar = document.createElement("div");
 document.body.append(toolBar);
 
+// -- user choose - the color picker --
+const colorPicker = document.createElement("input");
+colorPicker.type = "color";
+colorPicker.value = "#000";
+colorPicker.title = "Choose brush color";
+toolBar.appendChild(colorPicker);
+
+let currentColor = "#000";
+colorPicker.addEventListener("input", (e) => {
+  currentColor = (e.target as HTMLInputElement).value;
+});
+
 // -- Checks what tools are highlighted --
 const highlightTool: HTMLButtonElement[] = [];
 
@@ -107,6 +119,8 @@ class Line implements DisplayCanvas {
     ctx.beginPath();
     const { x, y } = this.points[0]!;
     ctx.moveTo(x, y);
+    ctx.strokeStyle = currentColor;
+    ctx.fillStyle = currentColor;
 
     // looping through the points to create the line
     for (const { x, y } of this.points.slice(1)) {
@@ -241,12 +255,6 @@ stickers.forEach((sticker) => {
     currentSticker = sticker.text;
     currentTool = "sticker";
     setActiveTool(button);
-
-    //stickerButtons.forEach((btn) => btn.classList.remove("selectedTool"));
-    //thickButton.classList.remove("selectedTool");
-    //thinButton.classList.remove("selectedTool");
-    //button.classList.add("selectedTool");
-    //stickerButtons.push(button);
   });
 
   toolBar.append(button);
@@ -276,10 +284,6 @@ customButton.addEventListener("click", () => {
       currentSticker = customSticker;
       currentTool = "sticker";
       setActiveTool(button);
-      //stickerButtons.forEach((btn) => btn.classList.remove("selectedTool"));
-      //thickButton.classList.remove("selectedTool");
-      //thinButton.classList.remove("selectedTool");
-      //button.classList.add("selectedTool");
       stickerButtons.push(button);
     });
 
@@ -298,8 +302,6 @@ const thinButton = createToolButton({
     currentThickness = THIN_LINE;
     currentTool = "line";
     setActiveTool(thinButton);
-    //thinButton.classList.add("selectedTool");
-    //thickButton.classList.remove("selectedTool");
   },
   isSelected: true,
 });
@@ -312,8 +314,6 @@ const thickButton = createToolButton({
     currentThickness = THICK_LINE;
     currentTool = "line";
     setActiveTool(thickButton);
-    //thickButton.classList.add("selectedTool");
-    //thinButton.classList.remove("selectedTool");
   },
   isSelected: false,
 });
